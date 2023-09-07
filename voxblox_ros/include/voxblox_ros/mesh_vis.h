@@ -294,13 +294,16 @@ inline void fillPointcloudWithMesh(
     if (!mesh->hasVertices()) {
       continue;
     }
+    bool has_necessary_color_mode = false;
     // Check that we can actually do the color stuff.
     if (color_mode == kColor || color_mode == kLambertColor) {
-      CHECK(mesh->hasColors());
+      if(mesh->hasColors())
+        has_necessary_color_mode = true;
     }
     if (color_mode == kNormals || color_mode == kLambert ||
         color_mode == kLambertColor) {
-      CHECK(mesh->hasNormals());
+      if(mesh->hasNormals())
+        has_necessary_color_mode = true;
     }
 
     for (size_t i = 0u; i < mesh->vertices.size(); i++) {
@@ -309,11 +312,20 @@ inline void fillPointcloudWithMesh(
       point.y = mesh->vertices[i].y();
       point.z = mesh->vertices[i].z();
 
-      Color color;
-      colorMsgToVoxblox(getVertexColor(mesh, color_mode, i), &color);
-      point.r = color.r;
-      point.g = color.g;
-      point.b = color.b;
+      if(has_necessary_color_mode)
+      {
+        Color color;
+        colorMsgToVoxblox(getVertexColor(mesh, color_mode, i), &color);
+        point.r = color.r;
+        point.g = color.g;
+        point.b = color.b;
+      }
+      else
+      {
+        point.r = 255.0;
+        point.g = 0.0;
+        point.b = 0.0;
+      }
 
       pointcloud->push_back(point);
     }
