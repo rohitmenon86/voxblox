@@ -292,7 +292,7 @@ class MeshLayer {
   }
 
   /// Deletes ALL parts of the mesh.
-  void clear() { mesh_map_.clear(); }
+  void clear() { if(mesh_map_.empty() == false) mesh_map_.clear(); }
 
   FloatingPoint block_size() const { return block_size_; }
 
